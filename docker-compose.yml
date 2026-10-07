@@ -1,0 +1,15 @@
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: sqlite:////app/data/certificates.db
+      GENERATED_FILES_DIR: /app/generated
+      TEMPLATE_PATH: /app/templates/certificate_template.pdf
+    volumes:
+      - certificate_data:/app/data
+      - ./generated:/app/generated
+
+volumes:
+  certificate_data:

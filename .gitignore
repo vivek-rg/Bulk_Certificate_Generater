@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.pytest-*/
+.env
+certificates.db
+*.db-shm
+*.db-wal
+generated/*
+!generated/.gitkeep
