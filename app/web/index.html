@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Create personalized certificates for your whole group, track generation, and download your PDFs.">
+  <title>Bulk Certificate Generator</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='10' fill='%231c4441'/%3E%3Cpath d='M12 10h16v20H12z' fill='none' stroke='%23e6c582' stroke-width='2'/%3E%3Cpath d='M16 16h8m-8 5h8m-8 5h5' stroke='%23e6c582' stroke-width='2'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/static/styles.css?v=1">
+  <script src="/static/app.js?v=1" defer></script>
+</head>
+<body>
+  <svg class="icon-library" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="i-award" viewBox="0 0 24 24"><circle cx="12" cy="8" r="5"/><path d="m8 12-2 9 6-3 6 3-2-9"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V3m-5 5 5-5 5 5M4 16v5h16v-5"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v13m-5-5 5 5 5-5M4 17v4h16v-4"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3H5v18h14V8zM14 3v5h5M8 12h8m-8 4h5"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 8V3H3v13h5"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5M6 6a8 8 0 0 1 14 6M4 12a8 8 0 0 0 14 6"/></symbol>
+    <symbol id="i-pen" viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></symbol>
+  </svg>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="/" aria-label="Bulk Certificate Generator home">
+        <span class="brand-icon"><svg class="icon"><use href="#i-award"/></svg></span>
+        <span>Bulk Certificate Generator<span class="brand-subtitle">A little recognition goes a long way.</span></span>
+      </a>
+      <span class="workspace-label"><span class="tiny-dot"></span> Certificate workspace</span>
+    </div>
+  </header>
+
+  <main class="page">
+    <section id="builder-view">
+      <div class="page-heading">
+        <p class="eyebrow">MADE FOR EVERY MILESTONE</p>
+        <h1>Recognize every achievement.</h1>
+        <p class="lead">Beautiful certificates for your entire group. Add the details, choose your recipients, and let us take care of the rest.</p>
+      </div>
+
+      <div class="workspace-grid">
+        <form id="certificate-form" novalidate>
+          <fieldset id="form-fields">
+            <section class="card details-card" aria-labelledby="details-heading">
+              <div class="section-heading"><span class="step-number">01</span><div><h2 id="details-heading">Certificate details</h2><p>Set the occasion you’re celebrating.</p></div></div>
+              <label for="certificate-title">Certificate title <span class="required">*</span></label>
+              <input id="certificate-title" name="certificate_title" maxlength="200" required placeholder="e.g. Python Programming Certification" autocomplete="off">
+              <div class="date-row"><div><label for="certificate-date">Certificate date <span class="required">*</span></label><input id="certificate-date" name="certificate_date" type="date" min="0001-01-01" max="9999-12-31" required></div><p>This date appears on every certificate in the batch.</p></div>
+            </section>
+
+            <section class="card recipients-card" aria-labelledby="recipients-heading">
+              <div class="section-heading"><span class="step-number">02</span><div><h2 id="recipients-heading">Your recipients</h2><p>A name and an email for each person.</p></div><span id="recipient-count" class="count-pill">1 recipient</span></div>
+              <div class="import-bar" id="drop-zone">
+                <div class="import-copy"><svg class="icon"><use href="#i-upload"/></svg><div><strong>Have a list ready?</strong><span>Drop a CSV here, or choose a file.</span></div></div>
+                <button id="import-button" type="button" class="button button-secondary">Import CSV</button>
+                <input id="csv-file" type="file" accept=".csv,text/csv" hidden>
+              </div>
+              <p class="csv-help">Use <code>name</code> and <code>email</code> column headers. <button id="sample-csv" class="text-button" type="button">Download a sample</button></p>
+              <div class="recipient-labels" aria-hidden="true"><span></span><span>Full name</span><span>Email address</span><span></span></div>
+              <div id="recipient-rows"></div>
+              <div class="recipient-actions"><button id="add-recipient" type="button" class="text-button add-button"><svg class="icon"><use href="#i-plus"/></svg>Add recipient</button><div id="editor-pagination" class="pagination" hidden><button id="editor-prev" type="button" class="icon-button" aria-label="Previous recipients">←</button><span id="editor-page"></span><button id="editor-next" type="button" class="icon-button" aria-label="Next recipients">→</button></div></div>
+              <p class="field-hint">Up to 10,000 recipients per batch. Emails are saved with the records; certificates are downloaded here.</p>
+            </section>
+
+            <section class="card signature-card" aria-labelledby="signature-heading">
+              <div class="section-heading">
+                <span class="step-number">03</span>
+                <div>
+                  <h2 id="signature-heading">Authorized signature <span class="optional-pill">Optional</span></h2>
+                  <p>Draw instantly or upload a signature to include on all certificates.</p>
+                </div>
+                <button id="clear-signature" type="button" class="text-button" hidden>Remove signature</button>
+              </div>
+
+              <div class="signature-tabs" role="tablist" aria-label="Signature input mode">
+                <button type="button" id="tab-draw" class="tab-button is-active" role="tab" aria-selected="true" aria-controls="panel-draw"><svg class="icon"><use href="#i-pen"/></svg>Draw signature</button>
+                <button type="button" id="tab-upload" class="tab-button" role="tab" aria-selected="false" aria-controls="panel-upload"><svg class="icon"><use href="#i-upload"/></svg>Upload image</button>
+              </div>
+
+              <!-- Draw Mode -->
+              <div id="panel-draw" class="signature-panel" role="tabpanel" aria-labelledby="tab-draw">
+                <div class="canvas-wrapper" id="canvas-wrapper">
+                  <canvas id="signature-canvas" aria-label="Signature drawing area"></canvas>
+                  <div class="canvas-baseline"></div>
+                  <div id="canvas-placeholder" class="canvas-placeholder">Draw your signature here with mouse, finger, or stylus</div>
+                </div>
+                <div class="signature-toolbar">
+                  <span class="field-hint">Drawn smoothly with dark signature ink</span>
+                  <button id="reset-canvas" type="button" class="text-button">Clear drawing</button>
+                </div>
+              </div>
+
+              <!-- Upload Mode -->
+              <div id="panel-upload" class="signature-panel" role="tabpanel" aria-labelledby="tab-upload" hidden>
+                <div class="import-bar" id="sig-drop-zone">
+                  <div class="import-copy">
+                    <svg class="icon"><use href="#i-upload"/></svg>
+                    <div>
+                      <strong>Upload signature image</strong>
+                      <span>PNG, JPG, or WebP. Transparent background recommended.</span>
+                    </div>
+                  </div>
+                  <button id="sig-upload-btn" type="button" class="button button-secondary">Choose image</button>
+                  <input id="sig-file" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" hidden>
+                </div>
+                <div id="sig-upload-preview" class="signature-upload-preview" hidden>
+                  <img id="sig-upload-thumb" class="signature-thumb" alt="Signature preview">
+                  <div class="upload-meta">
+                    <span id="sig-upload-name" class="upload-filename"></span>
+                    <button id="sig-remove-upload" type="button" class="text-button">Remove uploaded image</button>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <div id="form-error" class="notice notice-error" role="alert" hidden></div>
+            <div id="import-notice" class="notice notice-success" role="status" hidden></div>
+            <div class="submit-row"><p><svg class="icon"><use href="#i-check"/></svg>One personalized PDF for every recipient.</p><button id="generate-button" class="button button-primary" type="submit"><span>Generate certificates</span><svg class="icon"><use href="#i-arrow"/></svg></button></div>
+          </fieldset>
+        </form>
+
+        <aside class="preview-column">
+          <div class="preview-panel">
+            <div class="preview-heading"><h2>A preview of their moment</h2><span class="small-label">CLASSIC TEMPLATE</span></div>
+            <div class="certificate-preview" aria-label="Illustrative certificate preview">
+              <div class="certificate-inner">
+                <div class="preview-org">{{organization_name}}</div>
+                <div class="preview-certificate">CERTIFICATE</div>
+                <div class="preview-rule"></div>
+                <p class="preview-intro">This certificate is proudly presented to</p>
+                <div id="preview-name" class="preview-name">Recipient name</div>
+                <p class="preview-completing">for successfully completing</p>
+                <div id="preview-title" class="preview-title">Your certificate title</div>
+                <div id="preview-date" class="preview-date"></div>
+                <div class="preview-id">Unique certificate ID</div>
+                <div class="preview-signature">
+                  <img id="preview-signature-img" class="preview-signature-img" alt="Signature preview" hidden>
+                  <span></span>
+                  AUTHORIZED SIGNATORY
+                </div>
+              </div>
+            </div>
+            <div class="preview-caption"><span>Landscape A4</span><span class="caption-dot">·</span><span>PDF format</span><span class="caption-dot">·</span><span>Ready to print</span></div>
+            <p class="preview-note">A preview of the shared design. Your PDFs include each recipient’s name and a unique certificate ID.</p>
+          </div>
+          <div class="how-it-works"><h3>From a list to a little celebration.</h3><div><span>1</span><p><strong>Add your details</strong>A title, a date, and the people who earned it.</p></div><div><span>2</span><p><strong>Generate your batch</strong>Follow progress as each certificate is created.</p></div><div><span>3</span><p><strong>Download and share</strong>Every certificate is ready as its own PDF.</p></div></div>
+        </aside>
+      </div>
+
+      <section class="recent-section" aria-labelledby="recent-heading">
+        <div class="recent-header"><div><p class="eyebrow">PICK UP WHERE YOU LEFT OFF</p><h2 id="recent-heading">Recent batches</h2></div><span class="field-hint">Saved in this browser</span></div>
+        <div id="recent-jobs"></div>
+        <details class="lookup"><summary>Open a batch using its job ID</summary><form id="lookup-form"><label class="visually-hidden" for="lookup-id">Job ID</label><input id="lookup-id" placeholder="Paste your job ID" autocomplete="off" required><button class="button button-secondary" type="submit">Open batch</button></form><p id="lookup-error" class="error-text" role="alert" hidden></p></details>
+      </section>
+    </section>
+
+    <section id="results-view" hidden aria-labelledby="results-heading">
+      <div class="results-heading"><div><p class="eyebrow">YOUR CERTIFICATE BATCH</p><h1 id="results-heading" tabindex="-1">Preparing your certificates.</h1><p id="results-title" class="lead"></p></div><div class="results-actions"><button id="download-zip" class="button button-primary" type="button" hidden><svg class="icon"><use href="#i-download"/></svg>Download all (ZIP)</button><button id="new-batch" class="button button-secondary" type="button"><svg class="icon"><use href="#i-plus"/></svg>Create another batch</button></div></div>
+      <section class="card progress-card" aria-label="Batch progress">
+        <div class="progress-top"><span id="job-status" class="status-badge">Loading</span><button id="refresh-job" type="button" class="text-button"><svg class="icon"><use href="#i-refresh"/></svg>Refresh</button></div>
+        <p id="job-message" class="job-message" role="status">Loading your batch…</p>
+        <div class="stats-grid"><div><span>Total recipients</span><strong id="stat-total">—</strong></div><div><span>Processed</span><strong id="stat-completed">—</strong></div><div><span>Ready to download</span><strong id="stat-successful">—</strong></div><div><span>Failed</span><strong id="stat-failed">—</strong></div></div>
+        <div class="progress-label"><span id="progress-label">Waiting for progress</span><strong id="progress-percentage">0%</strong></div><div id="progress-track" class="progress-track" role="progressbar" aria-label="Certificate generation progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="progress-fill"></div></div>
+        <div class="job-reference"><div><span>Job ID</span><code id="job-id"></code></div><button id="copy-job" type="button" class="text-button"><svg class="icon"><use href="#i-copy"/></svg>Copy ID</button></div>
+      </section>
+      <div id="tracking-error" class="notice notice-error" role="alert" hidden></div>
+      <section class="card results-card" aria-labelledby="files-heading"><div class="files-header"><div><h2 id="files-heading">Certificates</h2><p>Download each PDF when it’s ready.</p></div><span id="results-count" class="count-pill"></span></div><div class="table-scroll"><table><thead><tr><th scope="col">Recipient</th><th scope="col">Certificate ID</th><th scope="col">Status</th><th scope="col"><span class="visually-hidden">Download</span></th></tr></thead><tbody id="certificate-results"></tbody></table></div><div class="results-pagination"><span id="result-range"></span><div class="pagination"><button id="results-prev" class="button button-secondary" type="button">← Previous</button><button id="results-next" class="button button-secondary" type="button">Next →</button></div></div></section>
+    </section>
+  </main>
+
+  <footer class="site-footer"><span>Made for moments worth recognizing.</span><a href="/docs" target="_blank" rel="noopener">Developer documentation ↗</a></footer>
+  <div id="toast" class="toast" role="status" hidden></div>
+  <noscript><p class="notice notice-error">Enable JavaScript to create and manage certificate batches.</p></noscript>
+</body>
+</html>
